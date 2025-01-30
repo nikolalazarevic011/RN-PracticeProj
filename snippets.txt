@@ -1,0 +1,35 @@
+Theres more if needed - more react native -  https://github.com/r5n-labs/vscode-react-javascript-snippets/blob/HEAD/docs/Snippets.md
+
+react - https://marketplace.visualstudio.com/items?itemName=burkeholland.simple-react-snippets
+----------------------------------------------------------------------------
+
+rnfs:
+
+import React from 'react'
+import { StyleSheet, View, Text } from 'react-native'
+
+export default function $1() {
+  return (
+    <View>
+      <Text> $2 </Text>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({})
+----------------------------------------------------------------------------
+
+uef - useEffect setup
+
+----------------------------------------------------------------------------
+
+usf - Declare a new state variable using State Hook
+
+const [|, set|] = useState();
+----------------------------------------------------------------------------
+ssf - Functional setState
+this.setState(prevState => {
+  return { | : prevState.| }
+});
+
+----------------------------------------------------------------------------
