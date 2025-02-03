@@ -9,6 +9,8 @@ import AllMovies from "./screens/AllMovies";
 import Watchlist from "./screens/Watchlist";
 import MovieDetail from "./screens/MovieDetail";
 import { Ionicons } from "@expo/vector-icons";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 
 export default function App() {
     const Stack = createNativeStackNavigator();
@@ -62,18 +64,23 @@ export default function App() {
         );
     }
     return (
-        <ThemeProvider theme={theme}>
-            <NavigationContainer>
-                <Stack.Navigator>
-                    <Stack.Screen
-                        name="MoviesOverview"
-                        component={MoviesOverview}
-                        options={{ headerShown: false }}
-                    />
-                    <Stack.Screen name="AllMovies" component={MovieDetail} />
-                </Stack.Navigator>
-            </NavigationContainer>
-        </ThemeProvider>
+        <Provider store={store}>
+            <ThemeProvider theme={theme}>
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen
+                            name="MoviesOverview"
+                            component={MoviesOverview}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="AllMovies"
+                            component={MovieDetail}
+                        />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ThemeProvider>
+        </Provider>
     );
 }
 

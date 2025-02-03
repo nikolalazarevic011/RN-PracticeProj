@@ -1,14 +1,18 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { loadMovies } from "../store/moviesSlice";
+import MoviesOutput from "../components/MoviesOutput";
 
-const AllMovies = () => {
-  return (
-    <View>
-      <Text>AllMovies</Text>
-    </View>
-  )
+export default function AllMovies() {
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(loadMovies()); // ✅ Fetch movies when component mounts
+    }, [dispatch]);
+
+    return (
+        <>
+            <MoviesOutput />
+        </>
+    );
 }
-
-export default AllMovies
-
-const styles = StyleSheet.create({})
