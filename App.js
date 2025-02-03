@@ -1,6 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { ThemeProvider, Button, createTheme } from "@rneui/themed";
+import { StyleSheet } from "react-native";
+import { ThemeProvider } from "@rneui/themed";
 import theme from "./theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -67,15 +66,26 @@ export default function App() {
         <Provider store={store}>
             <ThemeProvider theme={theme}>
                 <NavigationContainer>
-                    <Stack.Navigator>
+                    <Stack.Navigator
+                        screenOptions={{
+                            headerStyle: {
+                                backgroundColor: theme.lightColors.secondary,
+                            },
+                            headerTintColor: "white",
+                           
+                        }}
+                    >
                         <Stack.Screen
                             name="MoviesOverview"
                             component={MoviesOverview}
                             options={{ headerShown: false }}
                         />
                         <Stack.Screen
-                            name="AllMovies"
+                            name="MovieDetail"
                             component={MovieDetail}
+                            options={{
+                                presentation: "modal", title: "Movie Details"
+                            }}
                         />
                     </Stack.Navigator>
                 </NavigationContainer>
