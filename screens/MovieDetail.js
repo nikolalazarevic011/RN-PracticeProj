@@ -1,17 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMovieById } from "../store/moviesSlice";
+import {
+    addToWatchlist,
+    fetchMovieById,
+    removeFromWatchlist,
+} from "../store/moviesSlice";
 import { Card, Icon, Button } from "@rneui/themed";
+import IconButton from "../components/UI/IconButton";
+import MovieItem from "../components/MovieItem";
 
-const MovieDetail = ({ route }) => {
+const MovieDetail = ({ route, navigation }) => {
     const { movieId } = route.params;
     const dispatch = useDispatch();
     const movie = useSelector((state) => state.movies.selectedMovie);
+    const watchlist = useSelector((state) => state.movies.watchlist);
+
+    const isOnWatchlist = movie
+        ? watchlist.some((item) => item.id === movie.id)
+        : false;
 
     useEffect(() => {
         dispatch(fetchMovieById(movieId));
     }, [dispatch, movieId]);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <IconButton
+                    icon={isOnWatchlist ? "star" : "star-outline"}
+                    size={24}
+                    color="white"
+                    onPress={() => {
+                        if (movie) {
+                            if (isOnWatchlist) {
+                                dispatch(removeFromWatchlist(movie));
+                            } else {
+                                dispatch(addToWatchlist(movie));
+                            }
+                        }
+                    }}
+                />
+            ),
+        });
+    }, [navigation, dispatch, movie, isOnWatchlist]);
 
     if (!movie) {
         return (
@@ -29,57 +61,7 @@ const MovieDetail = ({ route }) => {
 
     return (
         <ScrollView contentContainerStyle={{ padding: 20 }}>
-            <Card>
-                <Card.Image source={{ uri: movie.poster }} />
-                <Card.Title>{movie.title}</Card.Title>
-                <Card.Divider />
-                <Text style={{ marginBottom: 10, fontSize: 18 }}>
-                    {movie.overview}
-                </Text>
-
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                        <Icon name="star" type="font-awesome" color="gold" />
-                        <Text style={{ marginLeft: 5, fontSize: 16 }}>
-                            {movie.rating}
-                        </Text>
-                    </View>
-
-                    <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                    >
-                        <Icon
-                            name="calendar"
-                            type="font-awesome"
-                            color="#007AFF"
-                        />
-                        <Text style={{ marginLeft: 5, fontSize: 16 }}>
-                            {movie.releaseDate}
-                        </Text>
-                    </View>
-                </View>
-                <Button
-                    title="Watch Trailer"
-                    icon={
-                        <Icon
-                            name="video-camera"
-                            type="font-awesome"
-                            color="white"
-                        />
-                    }
-                    buttonStyle={{ backgroundColor: "#007AFF", marginTop: 15 }}
-                    onPress={() => {
-                        // Navigate to trailer screen or open trailer URL
-                    }}
-                />
-            </Card>
+            <MovieItem item={movie} id={movie.id} />
         </ScrollView>
     );
 };

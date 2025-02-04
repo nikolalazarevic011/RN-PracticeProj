@@ -27,9 +27,22 @@ const moviesSlice = createSlice({
         list: [],
         page: 1,
         selectedMovie: null,
+        watchlist: [],
     },
-    reducers: {}, // No need for manual reducers for async data
-    extraReducers: (builder) => {
+    reducers: {
+        addToWatchlist: (state, action) => {
+            const exists = state.watchlist.find(
+                (movie) => movie.id === action.payload.id
+            );
+            if (!exists) {
+                state.watchlist.push(action.payload);
+            }
+        },
+        removeFromWatchlist: (state, action) => {
+            state.watchlist = state.watchlist.filter(movie => movie.id !== action.payload.id);
+          },
+    }, 
+    extraReducers: (builder) => { //async data gotta use this
         builder
             .addCase(loadMovies.fulfilled, (state, action) => {
                 state.list = [...state.list, ...action.payload.movies]; // ✅ Append new movies
@@ -41,4 +54,5 @@ const moviesSlice = createSlice({
     },
 });
 
+export const { addToWatchlist , removeFromWatchlist} = moviesSlice.actions;
 export default moviesSlice.reducer;

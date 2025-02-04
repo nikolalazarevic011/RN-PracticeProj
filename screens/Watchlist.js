@@ -1,14 +1,37 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from "react";
+import { View, Text, FlatList, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
+import { Card } from "@rneui/themed";
+import MovieItem from "../components/MovieItem";
 
 const Watchlist = () => {
-  return (
-    <View>
-      <Text>Watchlist</Text>
-    </View>
-  )
-}
+    const watchlist = useSelector((state) => state.movies.watchlist);
 
-export default Watchlist
+    if (!watchlist.length) {
+        return (
+            <View style={styles.centered}>
+                <Text>No movies in your watchlist yet.</Text>
+            </View>
+        );
+    }
 
-const styles = StyleSheet.create({})
+    return (
+        <FlatList
+            data={watchlist}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+                <MovieItem item={item} id={item.id} />
+            )}
+        />
+    );
+};
+
+export default Watchlist;
+
+const styles = StyleSheet.create({
+    centered: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});

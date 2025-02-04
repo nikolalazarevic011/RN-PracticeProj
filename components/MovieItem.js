@@ -3,9 +3,14 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "@rneui/themed";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
+import { Button } from "@rneui/themed";
 
 const MovieItem = ({ item, id }) => {
     const navigation = useNavigation();
+    const route = useRoute();
+
+    const isDetailScreen = route.name === "MovieDetail";
 
     function moviePressHandler() {
         navigation.navigate("MovieDetail", { movieId: id });
@@ -50,6 +55,23 @@ const MovieItem = ({ item, id }) => {
                         </Text>
                     </View>
                 </View>
+                {isDetailScreen && (
+                    <>
+                        <Text style={{ marginTop: 10, fontSize: 16 }}>
+                            {item.overview}
+                        </Text>
+                        <Button
+                            title="Watch Trailer"
+                            buttonStyle={{
+                                backgroundColor: "#007AFF",
+                                marginTop: 15,
+                            }}
+                            onPress={() => {
+                                // Add your trailer functionality here (navigate or open URL)
+                            }}
+                        />
+                    </>
+                )}
             </Card>
         </Pressable>
     );

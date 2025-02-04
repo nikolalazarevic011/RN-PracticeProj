@@ -72,7 +72,6 @@ export default function App() {
                                 backgroundColor: theme.lightColors.secondary,
                             },
                             headerTintColor: "white",
-                           
                         }}
                     >
                         <Stack.Screen
@@ -84,7 +83,8 @@ export default function App() {
                             name="MovieDetail"
                             component={MovieDetail}
                             options={{
-                                presentation: "modal", title: "Movie Details"
+                                presentation: "modal",
+                                title: "Movie Details",
                             }}
                         />
                     </Stack.Navigator>
