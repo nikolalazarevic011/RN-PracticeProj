@@ -3,22 +3,37 @@ import { ThemeProvider } from "@rneui/themed";
 import theme from "./theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import AllMovies from "./screens/AllMovies";
 import Watchlist from "./screens/Watchlist";
 import MovieDetail from "./screens/MovieDetail";
 import { Ionicons } from "@expo/vector-icons";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import SearchMovie from "./screens/SearchMovie";
 
 export default function App() {
     const Stack = createNativeStackNavigator();
     const BottomTabs = createBottomTabNavigator();
 
     function MoviesOverview() {
+
+        const navigation = useNavigation()
+
         return (
             <BottomTabs.Navigator
                 screenOptions={{
+                    headerRight: () => (
+                        <Ionicons
+                            name="search-outline"
+                            size={24}
+                            color="white"
+                            onPress={() => {
+                               navigation.navigate(("SearchMovie"))
+                            }}
+                            style={{ marginRight: 15 }}
+                        />
+                    ),
                     headerStyle: {
                         backgroundColor: theme.lightColors.secondary,
                     },
@@ -85,6 +100,14 @@ export default function App() {
                             options={{
                                 presentation: "modal",
                                 title: "Movie Details",
+                            }}
+                        />
+                        <Stack.Screen
+                            name="SearchMovie"
+                            component={SearchMovie}
+                            options={{
+                                presentation: "modal",
+                                title: "Movie Search",
                             }}
                         />
                     </Stack.Navigator>
