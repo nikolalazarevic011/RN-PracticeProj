@@ -27,14 +27,6 @@ const SearchMovie = () => {
                 style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
             />
             <TextInput
-                placeholder="Genre (optional)"
-                value={searchParams.genre}
-                onChangeText={(text) =>
-                    setSearchParams((prev) => ({ ...prev, genre: text }))
-                }
-                style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
-            />
-            <TextInput
                 placeholder='Type ("movie" or "tv", optional)'
                 value={searchParams.type}
                 onChangeText={(text) =>
@@ -43,17 +35,7 @@ const SearchMovie = () => {
                 style={{ borderWidth: 1, marginBottom: 10, padding: 8 }}
             />
             <Button title="Search" onPress={searchHandler} />
-            <FlatList
-                data={results}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={{ paddingVertical: 10 }}>
-                        <Text style={{ fontWeight: "bold" }}>{item.title}</Text>
-                        <Text>{item.overview}</Text>
-                    </View>
-                )}
-            />
-            {/* <MoviesList/> */}
+            <MoviesList data={results}/>
         </View>
     );
 };

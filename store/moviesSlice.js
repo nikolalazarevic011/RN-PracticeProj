@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchMovies } from "../util/http"; // ✅ API function with Axios
+import { fetchMovies, fetchSingleMovie } from "../util/http"; // ✅ API function with Axios
 
 // ✅ Thunk to fetch movies (instead of calling axios inside slice)
 export const loadMovies = createAsyncThunk(
@@ -12,11 +12,19 @@ export const loadMovies = createAsyncThunk(
     }
 );
 
-export const fetchMovieById = createAsyncThunk(
-    "movies/fetchMovieById",
+export const fetchMovieByIdLocally = createAsyncThunk(
+    "movies/fetchMovieByIdLocally",
     async (movieId, { getState }) => {
         const state = getState();
         const movie = state.movies.list.find((m) => m.id === movieId);
+        return movie ? movie : null;
+    }
+);
+export const fetchMovieByIdAsync = createAsyncThunk(
+    "movies/fetchMovieByIdAsync",
+    async (movieId, { getState }) => {
+        const state = getState();
+        const movie = await fetchSingleMovie(movieId);
         return movie ? movie : null;
     }
 );
@@ -39,20 +47,26 @@ const moviesSlice = createSlice({
             }
         },
         removeFromWatchlist: (state, action) => {
-            state.watchlist = state.watchlist.filter(movie => movie.id !== action.payload.id);
-          },
-    }, 
-    extraReducers: (builder) => { //async data gotta use this
+            state.watchlist = state.watchlist.filter(
+                (movie) => movie.id !== action.payload.id
+            );
+        },
+    },
+    extraReducers: (builder) => {
+        //async data gotta use this
         builder
             .addCase(loadMovies.fulfilled, (state, action) => {
                 state.list = [...state.list, ...action.payload.movies]; // ✅ Append new movies
                 state.page = action.payload.nextPage; // ✅ Update page count
             })
-            .addCase(fetchMovieById.fulfilled, (state, action) => {
+            .addCase(fetchMovieByIdLocally.fulfilled, (state, action) => {
+                state.selectedMovie = action.payload;
+            })
+            .addCase(fetchMovieByIdAsync.fulfilled, (state, action) => {
                 state.selectedMovie = action.payload;
             });
     },
 });
 
-export const { addToWatchlist , removeFromWatchlist} = moviesSlice.actions;
+export const { addToWatchlist, removeFromWatchlist } = moviesSlice.actions;
 export default moviesSlice.reducer;

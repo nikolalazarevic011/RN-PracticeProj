@@ -9,16 +9,16 @@ import Watchlist from "./screens/Watchlist";
 import MovieDetail from "./screens/MovieDetail";
 import { Ionicons } from "@expo/vector-icons";
 import { Provider } from "react-redux";
-import { store } from "./store/store";
+import { persistor, store } from "./store/store";
 import SearchMovie from "./screens/SearchMovie";
+import { PersistGate } from "redux-persist/integration/react";
 
 export default function App() {
     const Stack = createNativeStackNavigator();
     const BottomTabs = createBottomTabNavigator();
 
     function MoviesOverview() {
-
-        const navigation = useNavigation()
+        const navigation = useNavigation();
 
         return (
             <BottomTabs.Navigator
@@ -29,7 +29,7 @@ export default function App() {
                             size={24}
                             color="white"
                             onPress={() => {
-                               navigation.navigate(("SearchMovie"))
+                                navigation.navigate("SearchMovie");
                             }}
                             style={{ marginRight: 15 }}
                         />
@@ -79,40 +79,43 @@ export default function App() {
     }
     return (
         <Provider store={store}>
-            <ThemeProvider theme={theme}>
-                <NavigationContainer>
-                    <Stack.Navigator
-                        screenOptions={{
-                            headerStyle: {
-                                backgroundColor: theme.lightColors.secondary,
-                            },
-                            headerTintColor: "white",
-                        }}
-                    >
-                        <Stack.Screen
-                            name="MoviesOverview"
-                            component={MoviesOverview}
-                            options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                            name="MovieDetail"
-                            component={MovieDetail}
-                            options={{
-                                presentation: "modal",
-                                title: "Movie Details",
+            <PersistGate loading={null} persistor={persistor}>
+                <ThemeProvider theme={theme}>
+                    <NavigationContainer>
+                        <Stack.Navigator
+                            screenOptions={{
+                                headerStyle: {
+                                    backgroundColor:
+                                        theme.lightColors.secondary,
+                                },
+                                headerTintColor: "white",
                             }}
-                        />
-                        <Stack.Screen
-                            name="SearchMovie"
-                            component={SearchMovie}
-                            options={{
-                                presentation: "modal",
-                                title: "Movie Search",
-                            }}
-                        />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </ThemeProvider>
+                        >
+                            <Stack.Screen
+                                name="MoviesOverview"
+                                component={MoviesOverview}
+                                options={{ headerShown: false }}
+                            />
+                            <Stack.Screen
+                                name="MovieDetail"
+                                component={MovieDetail}
+                                options={{
+                                    presentation: "modal",
+                                    title: "Movie Details",
+                                }}
+                            />
+                            <Stack.Screen
+                                name="SearchMovie"
+                                component={SearchMovie}
+                                options={{
+                                    presentation: "modal",
+                                    title: "Movie Search",
+                                }}
+                            />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </ThemeProvider>
+            </PersistGate>
         </Provider>
     );
 }

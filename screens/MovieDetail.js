@@ -3,10 +3,10 @@ import { View, Text, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
     addToWatchlist,
-    fetchMovieById,
+    fetchMovieByIdAsync,
+    fetchMovieByIdLocally,
     removeFromWatchlist,
 } from "../store/moviesSlice";
-import { Card, Icon, Button } from "@rneui/themed";
 import IconButton from "../components/UI/IconButton";
 import MovieItem from "../components/MovieItem";
 
@@ -21,7 +21,14 @@ const MovieDetail = ({ route, navigation }) => {
         : false;
 
     useEffect(() => {
-        dispatch(fetchMovieById(movieId));
+        const loadMovie = () => {
+            const result = dispatch(fetchMovieByIdLocally(movieId));
+            if (!result.payload) {
+                // If no movie was found locally, fetch it from the remote source.
+                dispatch(fetchMovieByIdAsync(movieId));
+            }
+        };
+        loadMovie();
     }, [dispatch, movieId]);
 
     useLayoutEffect(() => {

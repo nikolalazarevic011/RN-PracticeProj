@@ -30,10 +30,8 @@ export const fetchMovies = async (page = 1) => {
     }
 };
 
-
 export const fetchSearchResults = async ({
     query = "",
-    genre = "",
     type = "",
     page = 1,
 }) => {
@@ -58,13 +56,6 @@ export const fetchSearchResults = async ({
             include_adult: false,
         };
 
-        // Note: The TMDB search endpoints don't directly support filtering by genre.
-        // If a genre is provided, you might need to use the /discover endpoint instead.
-        // Here, we include it in the params for demonstration purposes.
-        if (genre) {
-            params.with_genres = genre;
-        }
-
         const response = await axios.get(endpoint, { params });
 
         // Process the results into a unique array.
@@ -80,7 +71,6 @@ export const fetchSearchResults = async ({
                     releaseDate:
                         item.release_date || item.first_air_date || "Unknown",
                     rating: item.vote_average || "N/A",
-                    genre_ids: item.genre_ids || [],
                 });
             }
             return acc;
@@ -90,5 +80,33 @@ export const fetchSearchResults = async ({
     } catch (error) {
         console.error("Error fetching search results:", error);
         return [];
+    }
+};
+
+export const fetchSingleMovie = async (movieId) => {
+    try {
+        const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+            params: {
+                api_key: TMDB_API_KEY,
+                language: "en-US",
+            },
+        });
+
+        const movie = response.data;
+
+        // Format the movie data similarly to your other API calls:
+        return {
+            id: movie.id,
+            title: movie.title,
+            poster: movie.poster_path
+                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                : "https://via.placeholder.com/500",
+            overview: movie.overview || "No overview available",
+            releaseDate: movie.release_date || "Unknown",
+            rating: movie.vote_average || "N/A",
+        };
+    } catch (error) {
+        console.error("Error fetching movie by id:", error);
+        return null;
     }
 };
