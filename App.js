@@ -12,108 +12,135 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import SearchMovie from "./screens/SearchMovie";
 import { PersistGate } from "redux-persist/integration/react";
+import SignupScreen from "./screens/LoginScreen";
+import LoginScreen from "./screens/LoginScreen";
 
-export default function App() {
-    const Stack = createNativeStackNavigator();
-    const BottomTabs = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+const BottomTabs = createBottomTabNavigator();
 
-    function MoviesOverview() {
-        const navigation = useNavigation();
+function AuthStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: { backgroundColor: theme.lightColors.secondary },
+                headerTintColor: "white",
+                contentStyle: { backgroundColor: theme.lightColors.secondary },
+            }}
+        >
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+        </Stack.Navigator>
+    );
+}
 
-        return (
-            <BottomTabs.Navigator
-                screenOptions={{
-                    headerRight: () => (
+function AuthenticatedStack() {
+    const navigation = useNavigation();
+
+    return (
+        <BottomTabs.Navigator
+            screenOptions={{
+                headerRight: () => (
+                    <Ionicons
+                        name="search-outline"
+                        size={24}
+                        color="white"
+                        onPress={() => {
+                            navigation.navigate("SearchMovie");
+                        }}
+                        style={{ marginRight: 15 }}
+                    />
+                ),
+                headerStyle: {
+                    backgroundColor: theme.lightColors.secondary,
+                },
+                headerTintColor: "white",
+                tabBarStyle: {
+                    backgroundColor: theme.lightColors.secondary,
+                },
+                tabBarActiveTintColor: theme.darkColors.secondary,
+            }}
+        >
+            <BottomTabs.Screen
+                name="AllMovies"
+                component={AllMovies}
+                options={{
+                    title: "All Movies",
+                    tabBarLabel: "All Movies",
+                    tabBarIcon: ({ color, size }) => (
                         <Ionicons
-                            name="search-outline"
-                            size={24}
-                            color="white"
-                            onPress={() => {
-                                navigation.navigate("SearchMovie");
-                            }}
-                            style={{ marginRight: 15 }}
+                            name="home-outline"
+                            size={size}
+                            color={color}
                         />
                     ),
-                    headerStyle: {
-                        backgroundColor: theme.lightColors.secondary,
-                    },
-                    headerTintColor: "white",
-                    tabBarStyle: {
-                        backgroundColor: theme.lightColors.secondary,
-                    },
-                    tabBarActiveTintColor: theme.darkColors.secondary,
                 }}
-            >
-                <BottomTabs.Screen
-                    name="AllMovies"
-                    component={AllMovies}
-                    options={{
-                        title: "All Movies",
-                        tabBarLabel: "All Movies",
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons
-                                name="home-outline"
-                                size={size}
-                                color={color}
-                            />
-                        ),
-                    }}
-                />
-                <BottomTabs.Screen
-                    name="Watchlist"
-                    component={Watchlist}
-                    options={{
-                        title: "Watchlist",
-                        tabBarLabel: "Watchlist",
-                        tabBarIcon: ({ color, size }) => (
-                            <Ionicons
-                                name="bookmark-outline"
-                                size={size}
-                                color={color}
-                            />
-                        ),
-                    }}
-                />
-            </BottomTabs.Navigator>
-        );
-    }
+            />
+            <BottomTabs.Screen
+                name="Watchlist"
+                component={Watchlist}
+                options={{
+                    title: "Watchlist",
+                    tabBarLabel: "Watchlist",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons
+                            name="bookmark-outline"
+                            size={size}
+                            color={color}
+                        />
+                    ),
+                }}
+            />
+        </BottomTabs.Navigator>
+    );
+}
+
+function Navigation() {
+    return (
+        <NavigationContainer>
+            <AuthStack />
+            {/*  //! for now only auth screens */}
+            {/*   <NavigationContainer>
+                        <Stack.Navigator
+                        screenOptions={{
+                            headerStyle: {
+                                backgroundColor: theme.lightColors.secondary,
+                            },
+                            headerTintColor: "white",
+                        }}
+                    >
+                        <Stack.Screen
+                            name="AuthenticatedStack"
+                            component={AuthenticatedStack}
+                            options={{ headerShown: false }}
+                        />
+                        <Stack.Screen
+                            name="MovieDetail"
+                            component={MovieDetail}
+                            options={{
+                                presentation: "modal",
+                                title: "Movie Details",
+                            }}
+                        />
+                        <Stack.Screen
+                            name="SearchMovie"
+                            component={SearchMovie}
+                            options={{
+                                presentation: "modal",
+                                title: "Movie Search",
+                            }}
+                        />
+                    </Stack.Navigator> 
+                    </NavigationContainer> */}
+        </NavigationContainer>
+    );
+}
+
+export default function App() {
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
                 <ThemeProvider theme={theme}>
-                    <NavigationContainer>
-                        <Stack.Navigator
-                            screenOptions={{
-                                headerStyle: {
-                                    backgroundColor:
-                                        theme.lightColors.secondary,
-                                },
-                                headerTintColor: "white",
-                            }}
-                        >
-                            <Stack.Screen
-                                name="MoviesOverview"
-                                component={MoviesOverview}
-                                options={{ headerShown: false }}
-                            />
-                            <Stack.Screen
-                                name="MovieDetail"
-                                component={MovieDetail}
-                                options={{
-                                    presentation: "modal",
-                                    title: "Movie Details",
-                                }}
-                            />
-                            <Stack.Screen
-                                name="SearchMovie"
-                                component={SearchMovie}
-                                options={{
-                                    presentation: "modal",
-                                    title: "Movie Search",
-                                }}
-                            />
-                        </Stack.Navigator>
-                    </NavigationContainer>
+                    <Navigation />
                 </ThemeProvider>
             </PersistGate>
         </Provider>

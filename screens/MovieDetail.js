@@ -7,7 +7,7 @@ import {
     fetchMovieByIdLocally,
     removeFromWatchlist,
 } from "../store/moviesSlice";
-import IconButton from "../components/UI/IconButton";
+import IconButton from "../components/ui/IconButton";
 import MovieItem from "../components/MovieItem";
 
 const MovieDetail = ({ route, navigation }) => {
