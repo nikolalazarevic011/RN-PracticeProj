@@ -12,7 +12,7 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./store/store";
 import SearchMovie from "./screens/SearchMovie";
 import { PersistGate } from "redux-persist/integration/react";
-import SignupScreen from "./screens/LoginScreen";
+import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
 
 const Stack = createNativeStackNavigator();
@@ -98,7 +98,7 @@ function Navigation() {
     return (
         <NavigationContainer>
             <AuthStack />
-            {/*  //! for now only auth screens */}
+            {/*  //! for now only auth screens, switch with one below once auth finished */}
             {/*   <NavigationContainer>
                         <Stack.Navigator
                         screenOptions={{
