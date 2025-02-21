@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemeProvider } from "@rneui/themed";
 import theme from "./theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -8,12 +8,14 @@ import AllMovies from "./screens/AllMovies";
 import Watchlist from "./screens/Watchlist";
 import MovieDetail from "./screens/MovieDetail";
 import { Ionicons } from "@expo/vector-icons";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { persistor, store } from "./store/store";
 import SearchMovie from "./screens/SearchMovie";
 import { PersistGate } from "redux-persist/integration/react";
 import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
+import { useSelector } from "react-redux";
+import { logout } from "./store/authSlice";
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -33,22 +35,34 @@ function AuthStack() {
     );
 }
 
-function AuthenticatedStack() {
+function BottomButtons() {
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     return (
         <BottomTabs.Navigator
             screenOptions={{
                 headerRight: () => (
-                    <Ionicons
-                        name="search-outline"
-                        size={24}
-                        color="white"
-                        onPress={() => {
-                            navigation.navigate("SearchMovie");
-                        }}
-                        style={{ marginRight: 15 }}
-                    />
+                    <View style={{ flexDirection: "row", marginRight: 15 }}>
+                        <Ionicons
+                            name="search-outline"
+                            size={24}
+                            color="white"
+                            onPress={() => {
+                                navigation.navigate("SearchMovie");
+                            }}
+                            style={{ marginRight: 15 }}
+                        />
+                        <Ionicons
+                            name="log-out-outline"
+                            size={24}
+                            color="white"
+                            onPress={() => {
+                                dispatch(logout());
+                                // Insert your logout logic here.
+                            }}
+                        />
+                    </View>
                 ),
                 headerStyle: {
                     backgroundColor: theme.lightColors.secondary,
@@ -94,43 +108,50 @@ function AuthenticatedStack() {
     );
 }
 
+function AuthenticatedStack() {
+    // const navigation = useNavigation();
+
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: theme.lightColors.secondary,
+                },
+                headerTintColor: "white",
+            }}
+        >
+            <Stack.Screen
+                name="BottomButtons"
+                component={BottomButtons}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="MovieDetail"
+                component={MovieDetail}
+                options={{
+                    presentation: "modal",
+                    title: "Movie Details",
+                }}
+            />
+            <Stack.Screen
+                name="SearchMovie"
+                component={SearchMovie}
+                options={{
+                    presentation: "modal",
+                    title: "Movie Search",
+                }}
+            />
+        </Stack.Navigator>
+    );
+}
+
 function Navigation() {
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     return (
         <NavigationContainer>
-            <AuthStack />
-            {/*  //! for now only auth screens, switch with one below once auth finished */}
-            {/*   <NavigationContainer>
-                        <Stack.Navigator
-                        screenOptions={{
-                            headerStyle: {
-                                backgroundColor: theme.lightColors.secondary,
-                            },
-                            headerTintColor: "white",
-                        }}
-                    >
-                        <Stack.Screen
-                            name="AuthenticatedStack"
-                            component={AuthenticatedStack}
-                            options={{ headerShown: false }}
-                        />
-                        <Stack.Screen
-                            name="MovieDetail"
-                            component={MovieDetail}
-                            options={{
-                                presentation: "modal",
-                                title: "Movie Details",
-                            }}
-                        />
-                        <Stack.Screen
-                            name="SearchMovie"
-                            component={SearchMovie}
-                            options={{
-                                presentation: "modal",
-                                title: "Movie Search",
-                            }}
-                        />
-                    </Stack.Navigator> 
-                    </NavigationContainer> */}
+            {!isAuthenticated && <AuthStack />}
+
+            {isAuthenticated && <AuthenticatedStack />}
         </NavigationContainer>
     );
 }

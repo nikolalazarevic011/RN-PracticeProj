@@ -21,8 +21,8 @@ function LoginScreen() {
                 "Authentication failed!",
                 "Could not log you in. Please check your credentials or try again later!"
             );
+            setIsAuthenticating(false); //ovde a ne ispod err screen, zato sto se screen skloni kad se login ujes i onda se zove ova fja na nepostojeci state
         }
-        setIsAuthenticating(false);
     }
 
     if (isAuthenticating) {
