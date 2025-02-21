@@ -1,5 +1,73 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchMovies, fetchSingleMovie } from "../util/http"; // ✅ API function with Axios
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { ref, set, get } from "firebase/database";
+import { db } from "../firebaseConfig";
+import auth from "@react-native-firebase/auth";
+
+// ✅ Fetch Watchlist from Firebase for the logged-in user
+export const fetchWatchlist = createAsyncThunk(
+    "movies/fetchWatchlist",
+    async (_, { getState }) => {
+        const uid = getState().auth.uid;
+        if (!uid) return [];
+
+        try {
+            const watchlistRef = ref(db, `watchlists/${uid}`);
+            const snapshot = await get(watchlistRef);
+
+            return snapshot.exists() ? snapshot.val() : [];
+        } catch (error) {
+            console.error("Error fetching watchlist:", error);
+            return [];
+        }
+    }
+);
+
+// ✅ Save Watchlist (Adding a Movie)
+export const addToWatchlistFirebase = createAsyncThunk(
+    "movies/addToWatchlistFirebase",
+    async (movie, { getState }) => {
+        const uid = getState().auth.uid;
+        if (!uid) return;
+
+        try {
+            const watchlistRef = ref(db, `watchlists/${uid}`);
+            const currentWatchlist = getState().movies.watchlist;
+            const updatedWatchlist = [...currentWatchlist, movie];
+
+            await set(watchlistRef, updatedWatchlist); // Save to Firebase
+
+            return movie;
+        } catch (error) {
+            console.error("Error adding to watchlist:", error);
+            return null;
+        }
+    }
+);
+
+// ✅ Remove from Watchlist
+export const removeFromWatchlistFirebase = createAsyncThunk(
+    "movies/removeFromWatchlistFirebase",
+    async (movieId, { getState }) => {
+        const uid = getState().auth.uid;
+        if (!uid) return;
+
+        try {
+            const watchlistRef = ref(db, `watchlists/${uid}`);
+            const updatedWatchlist = getState().movies.watchlist.filter(
+                (movie) => movie.id !== movieId
+            );
+
+            await set(watchlistRef, updatedWatchlist); // Update Firebase
+
+            return movieId;
+        } catch (error) {
+            console.error("Error removing from watchlist:", error);
+            return null;
+        }
+    }
+);
 
 // ✅ Thunk to fetch movies (instead of calling axios inside slice)
 export const loadMovies = createAsyncThunk(
@@ -64,6 +132,19 @@ const moviesSlice = createSlice({
             })
             .addCase(fetchMovieByIdAsync.fulfilled, (state, action) => {
                 state.selectedMovie = action.payload;
+            })
+            .addCase(fetchWatchlist.fulfilled, (state, action) => {
+                state.watchlist = action.payload;
+            })
+            .addCase(addToWatchlistFirebase.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.watchlist.push(action.payload);
+                }
+            })
+            .addCase(removeFromWatchlistFirebase.fulfilled, (state, action) => {
+                state.watchlist = state.watchlist.filter(
+                    (movie) => movie.id !== action.payload
+                );
             });
     },
 });

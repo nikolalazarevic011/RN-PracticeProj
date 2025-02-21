@@ -15,6 +15,7 @@ const MovieDetail = ({ route, navigation }) => {
     const dispatch = useDispatch();
     const movie = useSelector((state) => state.movies.selectedMovie);
     const watchlist = useSelector((state) => state.movies.watchlist);
+    const uid = useSelector((state) => state.auth.uid);
 
     const isOnWatchlist = movie
         ? watchlist.some((item) => item.id === movie.id)
