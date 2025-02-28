@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchMovies, fetchSingleMovie } from "../util/http"; // ✅ API function with Axios
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { ref, set, get } from "firebase/database";
-import { db } from "../firebaseConfig";
-import auth from "@react-native-firebase/auth";
+import { db } from "./firebaseConfig.js";
 
 // ✅ Fetch Watchlist from Firebase for the logged-in user
 export const fetchWatchlist = createAsyncThunk(
@@ -24,24 +22,22 @@ export const fetchWatchlist = createAsyncThunk(
     }
 );
 
-// ✅ Save Watchlist (Adding a Movie)
 export const addToWatchlistFirebase = createAsyncThunk(
     "movies/addToWatchlistFirebase",
-    async (movie, { getState }) => {
+    async (movie, { getState, rejectWithValue }) => {
         const uid = getState().auth.uid;
-        if (!uid) return;
+        if (!uid) return rejectWithValue("No user ID found");
 
         try {
             const watchlistRef = ref(db, `watchlists/${uid}`);
             const currentWatchlist = getState().movies.watchlist;
             const updatedWatchlist = [...currentWatchlist, movie];
 
-            await set(watchlistRef, updatedWatchlist); // Save to Firebase
+            await set(watchlistRef, updatedWatchlist);
 
             return movie;
         } catch (error) {
-            console.error("Error adding to watchlist:", error);
-            return null;
+            return rejectWithValue(error.message);
         }
     }
 );
@@ -105,21 +101,7 @@ const moviesSlice = createSlice({
         selectedMovie: null,
         watchlist: [],
     },
-    reducers: {
-        addToWatchlist: (state, action) => {
-            const exists = state.watchlist.find(
-                (movie) => movie.id === action.payload.id
-            );
-            if (!exists) {
-                state.watchlist.push(action.payload);
-            }
-        },
-        removeFromWatchlist: (state, action) => {
-            state.watchlist = state.watchlist.filter(
-                (movie) => movie.id !== action.payload.id
-            );
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         //async data gotta use this
         builder
@@ -149,5 +131,4 @@ const moviesSlice = createSlice({
     },
 });
 
-export const { addToWatchlist, removeFromWatchlist } = moviesSlice.actions;
 export default moviesSlice.reducer;

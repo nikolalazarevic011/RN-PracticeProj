@@ -1,25 +1,46 @@
+// authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
+import { auth } from "../store/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+
+// Set up auth state listener when your app initializes
+// export const initAuthListener = (dispatch) => {
+//     onAuthStateChanged(auth, (user) => {
+//         if (user) {
+//             dispatch(setUser({
+//                 uid: user.uid,
+//                 email: user.email,
+//                 // Other user fields you need
+//             }));
+//         } else {
+//             dispatch(clearUser());
+//         }
+//     });
+// };
 
 const authSlice = createSlice({
     name: "auth",
     initialState: {
-        token: "",
         uid: null,
+        email: null,
+        token: null,
         isAuthenticated: false,
     },
     reducers: {
-        authenticate: (state, action) => {
-            state.token = action.payload.token;
-            state.uid = action.payload.uid; 
+        setUser: (state, action) => {
+            state.uid = action.payload.uid;
+            state.email = action.payload.email;
+            state.token = action.payload.idToken;
             state.isAuthenticated = true;
         },
-        logout: (state, action) => {
-            state.token = "";
+        clearUser: (state) => {
             state.uid = null;
+            state.email = null;
+            state.token = null;
             state.isAuthenticated = false;
         },
     },
 });
 
-export const { authenticate, logout } = authSlice.actions;
+export const { setUser, clearUser } = authSlice.actions;
 export default authSlice.reducer;

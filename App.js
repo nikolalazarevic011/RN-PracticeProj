@@ -15,7 +15,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
 import { useSelector } from "react-redux";
-import { logout } from "./store/authSlice";
+import { clearUser, initAuthListener } from "./store/authSlice";
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -58,7 +58,7 @@ function BottomButtons() {
                             size={24}
                             color="white"
                             onPress={() => {
-                                dispatch(logout());
+                                dispatch(clearUser());
                                 // Insert your logout logic here.
                             }}
                         />
@@ -157,6 +157,12 @@ function Navigation() {
 }
 
 export default function App() {
+    // sa ovim ce app da se logout kad force close the app, kao pomaze firebase
+    // da zna dal si auth, kad se startuje app, mada firebase valjda ima token
+    //  koji istekne posle nekog vremena i ne mozes onda da npr save the movie to watchlist
+
+    // initAuthListener(store.dispatch);
+
     return (
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Alert } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import AuthContent from "../components/Auth/AuthContent";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
 import { createUser } from "../util/auth";
-import { authenticate } from "../store/authSlice";
+import {  setUser } from "../store/authSlice";
 
 function SignupScreen() {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -14,8 +14,14 @@ function SignupScreen() {
     async function signupHandler({ email, password }) {
         setIsAuthenticating(true);
         try {
-            const token = await createUser(email, password);
-            dispatch(authenticate(token));
+            const userData = await createUser(email, password);
+            dispatch(
+                setUser({
+                    uid: userData.localId,
+                    email: userData.email,
+                    token: userData.idToken,
+                })
+            );
         } catch (error) {
             Alert.alert(
                 "Authentication failed",

@@ -2,10 +2,10 @@ import React, { useEffect, useLayoutEffect } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    addToWatchlist,
+    addToWatchlistFirebase,
     fetchMovieByIdAsync,
     fetchMovieByIdLocally,
-    removeFromWatchlist,
+    removeFromWatchlistFirebase,
 } from "../store/moviesSlice";
 import IconButton from "../components/ui/IconButton";
 import MovieItem from "../components/MovieItem";
@@ -42,9 +42,9 @@ const MovieDetail = ({ route, navigation }) => {
                     onPress={() => {
                         if (movie) {
                             if (isOnWatchlist) {
-                                dispatch(removeFromWatchlist(movie));
+                                dispatch(removeFromWatchlistFirebase(movieId));
                             } else {
-                                dispatch(addToWatchlist(movie));
+                                dispatch(addToWatchlistFirebase(movie));
                             }
                         }
                     }}

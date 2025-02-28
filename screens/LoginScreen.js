@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Alert } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-
+import { useDispatch } from "react-redux";
 import AuthContent from "../components/Auth/AuthContent";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
+import { setUser } from "../store/authSlice";
+import { fetchWatchlist } from "../store/moviesSlice";
 import { login } from "../util/auth";
-import { authenticate } from "../store/authSlice";
 
 function LoginScreen() {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -14,8 +14,16 @@ function LoginScreen() {
     async function loginHandler({ email, password }) {
         setIsAuthenticating(true);
         try {
-            const token = await login(email, password);
-            dispatch(authenticate(token));
+            const userData = await login(email, password);
+            // console.log(userData);
+            dispatch(
+                setUser({
+                    uid: userData.localId,
+                    email: userData.email,
+                    token: userData.idToken,
+                })
+            );
+            dispatch(fetchWatchlist());
         } catch (error) {
             Alert.alert(
                 "Authentication failed!",
