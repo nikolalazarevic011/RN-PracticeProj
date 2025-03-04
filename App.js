@@ -16,6 +16,7 @@ import SignupScreen from "./screens/SignupScreen";
 import LoginScreen from "./screens/LoginScreen";
 import { useSelector } from "react-redux";
 import { clearUser, initAuthListener } from "./store/authSlice";
+import MovieLocation from "./screens/MovieLocation";
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -141,6 +142,14 @@ function AuthenticatedStack() {
                     title: "Movie Search",
                 }}
             />
+            <Stack.Screen
+                name="MovieLocation"
+                component={MovieLocation}
+                options={{
+                    presentation: "modal",
+                    title: "Movie Location",
+                }}
+            />
         </Stack.Navigator>
     );
 }
@@ -160,8 +169,9 @@ export default function App() {
     // sa ovim ce app da se logout kad force close the app, kao pomaze firebase
     // da zna dal si auth, kad se startuje app, mada firebase valjda ima token
     //  koji istekne posle nekog vremena i ne mozes onda da npr save the movie to watchlist
+    //  znaci ako neces ovo promeni podesavaja u firebase da ne istice token tako cesto?
 
-    // initAuthListener(store.dispatch);
+    initAuthListener(store.dispatch);
 
     return (
         <Provider store={store}>

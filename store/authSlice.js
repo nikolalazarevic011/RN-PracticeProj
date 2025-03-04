@@ -4,19 +4,19 @@ import { auth } from "../store/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
 // Set up auth state listener when your app initializes
-// export const initAuthListener = (dispatch) => {
-//     onAuthStateChanged(auth, (user) => {
-//         if (user) {
-//             dispatch(setUser({
-//                 uid: user.uid,
-//                 email: user.email,
-//                 // Other user fields you need
-//             }));
-//         } else {
-//             dispatch(clearUser());
-//         }
-//     });
-// };
+export const initAuthListener = (dispatch) => {
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            dispatch(setUser({
+                uid: user.uid,
+                email: user.email,
+                // Other user fields you need
+            }));
+        } else {
+            dispatch(clearUser());
+        }
+    });
+};
 
 const authSlice = createSlice({
     name: "auth",

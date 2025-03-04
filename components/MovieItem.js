@@ -16,6 +16,10 @@ const MovieItem = ({ item, id }) => {
         navigation.navigate("MovieDetail", { movieId: id });
     }
 
+    function locationPressHandler(title) {
+        navigation.navigate("MovieLocation", { title: title });
+    }
+
     return (
         <Pressable onPress={moviePressHandler}>
             <Card>
@@ -69,6 +73,14 @@ const MovieItem = ({ item, id }) => {
                             onPress={() => {
                                 // Add your trailer functionality here (navigate or open URL)
                             }}
+                        />
+                        <Button
+                            title="Nearby Screenings"
+                            buttonStyle={{
+                                backgroundColor: "#007AFF",
+                                marginTop: 15,
+                            }}
+                            onPress={locationPressHandler(item.title)}
                         />
                     </>
                 )}
