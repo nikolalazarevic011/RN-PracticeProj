@@ -80,7 +80,7 @@ const MovieItem = ({ item, id }) => {
                                 backgroundColor: "#007AFF",
                                 marginTop: 15,
                             }}
-                            onPress={locationPressHandler(item.title)}
+                            onPress={() => locationPressHandler(item.title)}
                         />
                     </>
                 )}

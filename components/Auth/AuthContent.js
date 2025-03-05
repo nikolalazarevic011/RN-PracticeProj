@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View } from "react-native";
 
 import AuthForm from "./AuthForm";
 import theme from "../../theme";
-import FlatButton from "../ui/FlatButton";
+import FlatButton from "../UI/FlatButton";
 import { useNavigation } from "@react-navigation/native";
 
 function AuthContent({ isLogin, onAuthenticate }) {
