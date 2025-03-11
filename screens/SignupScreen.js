@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Alert } from "react-native";
 import { useDispatch } from "react-redux";
 import AuthContent from "../components/Auth/AuthContent";
-import LoadingOverlay from "../components/UI/LoadingOverlay";
 import { createUser } from "../util/auth";
 import { setUser } from "../store/authSlice";
+import LoadingOverlay from "../components/UI/LoadingOverlay";
 
 function SignupScreen() {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
