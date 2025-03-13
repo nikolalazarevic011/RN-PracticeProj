@@ -77,7 +77,7 @@ export default function MovieLocation({ route }) {
         setError(null);
 
         try {
-            console.log(`🎬 Searching for "${title}" showtimes near lat=${location.latitude}, lon=${location.longitude}`);
+            // console.log(`🎬 Searching for "${title}" showtimes near lat=${location.latitude}, lon=${location.longitude}`);
             
             // Pass the location explicitly to fetchClosestShowing
             const showtimes = await fetchClosestShowing(title, location);

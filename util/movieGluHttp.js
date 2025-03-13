@@ -16,7 +16,12 @@ export const fetchMovieGluFilmId = async (movieTitle) => {
         return null;
     }
 
-    // Clean the title - remove special characters and extra spaces
+    const filmId = 7772
+    return filmId;
+
+
+    //! this is for real gps call, no movieGlu sandbox
+   /*  // Clean the title - remove special characters and extra spaces
     const cleanTitle = movieTitle.trim().replace(/[^\w\s]/gi, "");
 
     if (!cleanTitle) {
@@ -58,7 +63,7 @@ export const fetchMovieGluFilmId = async (movieTitle) => {
             response.data.films.length > 0
         ) {
             const filmId = response.data.films[0].film_id;
-            // console.log(`✅ Found film ID: ${filmId}`);
+            console.log(`✅ Found film ID: ${filmId}`);
             return filmId;
         } else {
             console.warn("🚫 No matching film found in MovieGlu");
@@ -79,7 +84,9 @@ export const fetchMovieGluFilmId = async (movieTitle) => {
         }
 
         return null;
-    }
+    } */
+    //! END OF -  this is for real gps call, no movieGlu sandbox
+
 };
 
 // ✅ Fetch the closest cinema showing the movie
@@ -107,11 +114,12 @@ export const fetchClosestShowing = async (movieTitle, location) => {
     const now = new Date();
     const deviceDateTime = now.toISOString().replace(/\.\d+Z$/, "Z");
 
+    //! for real gps movie glu api
     // Format geolocation exactly as shown in the demo
-    const geolocation = `${lat};${lng}`;
+    // const geolocation = `${lat};${lng}`;
 
-    // //! test with default cords from movieGu to see if i get any results of nearby cinemas, because default cords from android studio are in the middle of nowhere
-    // const geolocation = `-22.0;14.0`; //worked for the raiders of the oak test same as movie glu dummy api test
+    //! test with default cords from movieGu to see if i get any results of nearby cinemas, because default cords from android studio are in the middle of nowhere
+    const geolocation = `-22.0;14.0`; //worked for the -  Raiders of the Lost Ark - test same as movie glu dummy api test
 
     // Build headers including geolocation
     const headers = {
@@ -125,8 +133,9 @@ export const fetchClosestShowing = async (movieTitle, location) => {
     };
 
     try {
-        // First, fetch the movie's film_id
+        // First, fetch the movie's film_id for real api
         const filmId = await fetchMovieGluFilmId(movieTitle);
+        // console.log(filmId);  -- //!has to be here when testing sand API - probably cuz recursive fn above is async
         if (!filmId) {
             return { error: `No film ID found for "${movieTitle}"` };
         }
