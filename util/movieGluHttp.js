@@ -38,7 +38,7 @@ export const fetchMovieGluFilmId = async (movieTitle) => {
     };
 
     try {
-        console.log(`🔍 Searching MovieGlu for: "${cleanTitle}"`);
+        // console.log(`🔍 Searching MovieGlu for: "${cleanTitle}"`);
 
         const response = await axios.get(
             `${MOVIEGLU_API_URL}/filmLiveSearch/`,
@@ -50,7 +50,7 @@ export const fetchMovieGluFilmId = async (movieTitle) => {
             }
         );
 
-        console.log(`📊 MovieGlu search response:`, response.data);
+        // console.log(`📊 MovieGlu search response:`, response.data);
 
         if (
             response.data &&
@@ -58,7 +58,7 @@ export const fetchMovieGluFilmId = async (movieTitle) => {
             response.data.films.length > 0
         ) {
             const filmId = response.data.films[0].film_id;
-            console.log(`✅ Found film ID: ${filmId}`);
+            // console.log(`✅ Found film ID: ${filmId}`);
             return filmId;
         } else {
             console.warn("🚫 No matching film found in MovieGlu");
@@ -109,6 +109,10 @@ export const fetchClosestShowing = async (movieTitle, location) => {
 
     // Format geolocation exactly as shown in the demo
     const geolocation = `${lat};${lng}`;
+
+    // //! test with default cords from movieGu to see if i get any results of nearby cinemas, because default cords from android studio are in the middle of nowhere
+    // const geolocation = `-22.0;14.0`; //worked for the raiders of the oak test same as movie glu dummy api test
+
     // Build headers including geolocation
     const headers = {
         client: MOVIEGLU_API_client,
@@ -138,7 +142,7 @@ export const fetchClosestShowing = async (movieTitle, location) => {
             }
         );
 
-        console.log("🎥 Closest showtimes:", response.data);
+        // console.log("🎥 Closest showtimes:", response.data);
         return response.data;
     } catch (error) {
         console.error(

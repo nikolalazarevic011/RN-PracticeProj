@@ -55,7 +55,7 @@ export default function MovieLocation({ route }) {
 
         try {
             const fetchedLocation = await getCurrentPositionAsync({ accuracy: 6 });
-            console.log("📍 User's fetchedLocation:", fetchedLocation);
+            // console.log("📍 User's fetchedLocation:", fetchedLocation);
             dispatch(setLocation(fetchedLocation));
         } catch (error) {
             console.error("❌ Error fetching location:", error);
@@ -83,7 +83,7 @@ export default function MovieLocation({ route }) {
             const showtimes = await fetchClosestShowing(title, location);
             
             if (showtimes && showtimes.cinemas && showtimes.cinemas.length > 0) {
-                console.log(`✅ Found ${showtimes.cinemas.length} cinemas showing "${title}"`);
+                // console.log(`✅ Found ${showtimes.cinemas.length} cinemas showing "${title}"`);
                 setCinemas(showtimes.cinemas);
             } else if (showtimes && showtimes.error) {
                 setError(showtimes.error);
