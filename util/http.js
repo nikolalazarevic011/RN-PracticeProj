@@ -111,3 +111,35 @@ export const fetchSingleMovie = async (movieId) => {
         return null;
     }
 };
+
+export const fetchMovieTrailer = async (movieId) => {
+    try {
+        const response = await axios.get(
+            `${TMDB_BASE_URL}/movie/${movieId}/videos`,
+            {
+                params: {
+                    api_key: TMDB_API_KEY,
+                    language: "en-US",
+                },
+            }
+        );
+
+        const videos = response.data.results;
+
+        if (videos.length > 0) {
+            // Find the first official trailer (or return first video)
+            const trailer =
+                videos.find(
+                    (video) =>
+                        video.type === "Trailer" && video.site === "YouTube"
+                ) || videos[0];
+            return `https://www.youtube.com/watch?v=${trailer.key}`;
+        } else {
+            console.warn("No trailer found for this movie.");
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching movie trailer:", error);
+        return null;
+    }
+};

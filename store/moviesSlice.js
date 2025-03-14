@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchMovies, fetchSingleMovie } from "../util/http"; // ✅ API function with Axios
+import { fetchMovies, fetchMovieTrailer, fetchSingleMovie } from "../util/http"; // ✅ API function with Axios
 import { ref, set, get } from "firebase/database";
 import { db } from "./firebaseConfig.js";
 
@@ -93,15 +93,29 @@ export const fetchMovieByIdAsync = createAsyncThunk(
     }
 );
 
+export const getMovieTrailer = createAsyncThunk(
+    "movies/getMovieTrailer",
+    async (movieId, { getState }) => {
+        const state = getState();
+        const trailer = await fetchMovieTrailer(movieId);
+        return trailer ? trailer : null;
+    }
+);
+
 const moviesSlice = createSlice({
     name: "movies",
     initialState: {
         list: [],
         page: 1,
         selectedMovie: null,
+        selectedMovieTrailer: null,
         watchlist: [],
     },
-    reducers: {},
+    reducers: {
+        resetTrailer: (state) => {
+            state.selectedMovieTrailer = null; // ✅ Reset trailer after opening
+        },
+    },
     extraReducers: (builder) => {
         //async data gotta use this
         builder
@@ -127,8 +141,12 @@ const moviesSlice = createSlice({
                 state.watchlist = state.watchlist.filter(
                     (movie) => movie.id !== action.payload
                 );
+            })
+            .addCase(getMovieTrailer.fulfilled, (state, action) => {
+                state.selectedMovieTrailer = action.payload;
             });
     },
 });
 
+export const { resetTrailer } = moviesSlice.actions;
 export default moviesSlice.reducer;

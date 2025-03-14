@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "@rneui/themed";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";
 import { Button } from "@rneui/themed";
+import { useDispatch, useSelector } from "react-redux";
+import { getMovieTrailer, resetTrailer } from "../store/moviesSlice";
+import { Linking } from "react-native";
 
 const MovieItem = ({ item, id }) => {
     const navigation = useNavigation();
     const route = useRoute();
+    const dispatch = useDispatch();
 
     const isDetailScreen = route.name === "MovieDetail";
+    const trailerUrl = useSelector(
+        (state) => state.movies.selectedMovieTrailer
+    );
 
     function moviePressHandler() {
         navigation.navigate("MovieDetail", { movieId: id });
@@ -19,6 +26,19 @@ const MovieItem = ({ item, id }) => {
     function locationPressHandler(title) {
         navigation.navigate("MovieLocation", { title: title });
     }
+
+    function trailerPressHandler(movieId) {
+        dispatch(getMovieTrailer(movieId)); // Fetch trailer
+    }
+
+    // Open trailer when it's available
+    useEffect(() => {
+        if (trailerUrl) {
+            Linking.openURL(trailerUrl);
+            dispatch(resetTrailer()); // ✅ Reset trailer state to prevent auto-reopening
+
+        }
+    }, [trailerUrl]);
 
     return (
         <Pressable onPress={moviePressHandler}>
@@ -71,7 +91,7 @@ const MovieItem = ({ item, id }) => {
                                 marginTop: 15,
                             }}
                             onPress={() => {
-                                // Add your trailer functionality here (navigate or open URL)
+                                trailerPressHandler(id);
                             }}
                         />
                         <Button
