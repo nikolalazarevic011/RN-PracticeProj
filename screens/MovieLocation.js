@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Alert, FlatList } from "react-native";
+import { StyleSheet, Text, View, Alert, FlatList, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
     getCurrentPositionAsync,
@@ -8,12 +8,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { setLocation } from "../store/locationSlice";
 import { fetchClosestShowing } from "../util/movieGluHttp";
+import { Linking } from "react-native";
 
 export default function MovieLocation({ route }) {
     const { title } = route.params;
     const dispatch = useDispatch();
     const location = useSelector((state) => state.location?.location) || null;
-    
+
     const [cinemas, setCinemas] = useState([]); // Store fetched cinema data
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -54,7 +55,9 @@ export default function MovieLocation({ route }) {
         }
 
         try {
-            const fetchedLocation = await getCurrentPositionAsync({ accuracy: 6 });
+            const fetchedLocation = await getCurrentPositionAsync({
+                accuracy: 6,
+            });
             // console.log("📍 User's fetchedLocation:", fetchedLocation);
             dispatch(setLocation(fetchedLocation));
         } catch (error) {
@@ -78,11 +81,15 @@ export default function MovieLocation({ route }) {
 
         try {
             // console.log(`🎬 Searching for "${title}" showtimes near lat=${location.latitude}, lon=${location.longitude}`);
-            
+
             // Pass the location explicitly to fetchClosestShowing
             const showtimes = await fetchClosestShowing(title, location);
-            
-            if (showtimes && showtimes.cinemas && showtimes.cinemas.length > 0) {
+
+            if (
+                showtimes &&
+                showtimes.cinemas &&
+                showtimes.cinemas.length > 0
+            ) {
                 // console.log(`✅ Found ${showtimes.cinemas.length} cinemas showing "${title}"`);
                 setCinemas(showtimes.cinemas);
             } else if (showtimes && showtimes.error) {
@@ -92,7 +99,9 @@ export default function MovieLocation({ route }) {
             }
         } catch (error) {
             console.error("❌ Error fetching cinemas:", error);
-            setError("An unexpected error occurred while searching for cinema showtimes.");
+            setError(
+                "An unexpected error occurred while searching for cinema showtimes."
+            );
         } finally {
             setIsLoading(false);
         }
@@ -122,13 +131,24 @@ export default function MovieLocation({ route }) {
                     data={cinemas}
                     keyExtractor={(item) => item.cinema_id.toString()}
                     renderItem={({ item }) => (
-                        <View style={styles.cinemaItem}>
-                            <Text style={styles.cinemaTitle}>{item.cinema_name}</Text>
-                            <Text style={styles.cinemaDetails}>{item.address}</Text>
-                            <Text style={styles.cinemaDetails}>
-                                Distance: {item.distance} miles
-                            </Text>
-                        </View>
+                        <Pressable
+                            onPress={() => {
+                                const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lng}`;
+                                Linking.openURL(mapsUrl);
+                            }}
+                        >
+                            <View style={styles.cinemaItem}>
+                                <Text style={styles.cinemaTitle}>
+                                    {item.cinema_name}
+                                </Text>
+                                <Text style={styles.cinemaDetails}>
+                                    {item.address}
+                                </Text>
+                                <Text style={styles.cinemaDetails}>
+                                    Distance: {item.distance} miles
+                                </Text>
+                            </View>
+                        </Pressable>
                     )}
                 />
             ) : (
@@ -170,4 +190,3 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
-
