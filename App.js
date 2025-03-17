@@ -17,10 +17,13 @@ import LoginScreen from "./screens/LoginScreen";
 import { useSelector } from "react-redux";
 import { clearUser, initAuthListener } from "./store/authSlice";
 import MovieLocation from "./screens/MovieLocation";
-import * as Notifications from "expo-notifications";
 import { useEffect } from "react";
-import { Platform } from "react-native";
-import Constants from "expo-constants";
+import { navigationRef } from "./util/navigationRef";
+import {
+    registerForPushNotifications,
+    setupNotificationListeners,
+    scheduleMovieNotification,
+} from "./util/notifications";
 
 const Stack = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator();
@@ -161,9 +164,8 @@ function AuthenticatedStack() {
 function Navigation() {
     const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
     return (
-        <NavigationContainer>
+        <NavigationContainer ref={navigationRef}>
             {!isAuthenticated && <AuthStack />}
-
             {isAuthenticated && <AuthenticatedStack />}
         </NavigationContainer>
     );
@@ -176,22 +178,12 @@ export default function App() {
     //  znaci ako neces ovo promeni podesavaja u firebase da ne istice token tako cesto?
     initAuthListener(store.dispatch);
 
-
-    async function registerForPushNotifications() {
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== "granted") {
-            alert("Permission for notifications was denied!");
-            return;
-        }
-    
-        const token = await Notifications.getExpoPushTokenAsync();
-        console.log("Expo Push Token:", token.data);
-    }
-    
     useEffect(() => {
         registerForPushNotifications();
+        scheduleMovieNotification(); // ✅ Moved from http.js to notifications.js
+        const unsubscribe = setupNotificationListeners();
+        return () => unsubscribe();
     }, []);
-    
 
     return (
         <Provider store={store}>

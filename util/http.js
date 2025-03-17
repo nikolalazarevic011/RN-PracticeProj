@@ -1,6 +1,7 @@
 // util/http.js
 import axios from "axios";
 import { TMDB_API_KEY, TMDB_BASE_URL } from "@env";
+import * as Notifications from "expo-notifications";
 
 export const fetchMovies = async (page = 1) => {
     try {
@@ -143,3 +144,4 @@ export const fetchMovieTrailer = async (movieId) => {
         return null;
     }
 };
+
